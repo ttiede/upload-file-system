@@ -38,6 +38,21 @@ src/
 └── common/     → exception handler
 ```
 
+## collections
+
+cada estrutura foi escolhida por um motivo específico, não por padrão
+
+| onde | collection | por que |
+|------|-----------|---------|
+| partes do upload | `TreeMap<Integer, PartInfo>` | partes chegam fora de ordem num upload paralelo — o treemap ordena por chave automaticamente, sem sort manual |
+| sessões ativas | `ConcurrentHashMap` | vários uploads simultâneos, lock por segmento em vez de lock global |
+| lru cache (l1) | `LinkedHashMap(accessOrder=true)` | `removeEldestEntry` faz o eviction automático do item menos recente |
+| cache l2 | `ConcurrentHashMap` | thread-safe sem synchronized explícito |
+| idempotência de eventos | `ConcurrentHashMap.newKeySet()` | `add()` retorna false se o eventId já existe — one-liner pra idempotência |
+| agrupamento por status | `EnumMap` | acesso por índice de array, mais eficiente que hashmap quando a chave é enum |
+| allowlist de email | `HashSet` | `contains()` em O(1) — não precisa de ordem |
+| erros de validação | `LinkedHashMap` | mantém a ordem de declaração dos campos do dto |
+
 ## endpoints
 
 **upload**
