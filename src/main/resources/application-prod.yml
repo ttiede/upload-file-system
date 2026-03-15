@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: WARN
+    com.uploadplatform: INFO
+  pattern:
+    console: '{"timestamp":"%d","level":"%p","logger":"%logger{36}","message":"%msg"}%n'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
